@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>patimap</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <style>
+            #map {
+            height: 600px; /* 地図の高さ */
+            width: 100%;  /* 地図の幅 */
+            }
+        </style>
+    </head>
+    <body>
+        <div id ="map"></div>
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+    </body>
+</html>

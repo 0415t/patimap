@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最小メッセージフォーム (サーバー送信)</title>
+</head>
+<body>
+    <h1>メッセージ投稿 (データをサーバーへ送信)</h1>
+    
+    <!-- 1. データを入力し、送信するためのHTMLフォーム -->
+    <form method="post" action="{{ url_for('chat') }}">
+        <p>
+            <label for="sender">送信者名:</label>
+            <input type="text" id="sender" name="sender" placeholder="送信者" required>
+        </p>
+        <p>
+            <label for="content">メッセージ本文:</label>
+            <textarea id="content" name="content" rows="4" placeholder="本文" required></textarea>
+        </p>
+        <!-- type="submit"のボタンがフォームデータを送信するトリガーになります -->
+        <button type="submit" id="submit-button">送信</button>
+    </form>
+
+    <!--ログの表示 !-->
+    {% for message in messages %}
+    <div class="message-container">
+        <span class="sender">{{ message.sender }}</span>
+        <span class="date">{{ message.post_date | format_datetime('yyyy/MM/dd HH:mm:ss')}}</span>
+        
+        <div class="content">{{ message.content }}</div>
+    </div>
+    {% endfor %}
+    <a href="/">ホームへ移動</a>
+</body>
