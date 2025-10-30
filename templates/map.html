@@ -8,9 +8,41 @@
             height: 600px; /* 地図の高さ */
             width: 100%;  /* 地図の幅 */
             }
+
+            .search-container {
+                position: absolute; /* マップ上に重ねて表示 */
+                top: 10px;          /* 上端から10px */
+                right: 10px;         /* 左端から10px */
+                z-index: 1000;      /* マップより手前に表示 */
+                padding: 10px;
+                background-color: white;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            }
+            #search-input {
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 200px; /* 幅を調整 */
+            }
+            .search-container button {
+                padding: 8px 15px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            /* ------------------ */
         </style>
     </head>
     <body>
+        <div class="search-container">
+            <form action="/search" method="GET">
+                <input type="text" id="search-input" name="query" placeholder="場所を検索...">
+                <button type="submit">検索</button>
+            </form>
+        </div>
         <div id ="map"></div>
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src="{{ url_for('static', filename='js/map.js') }}"></script>

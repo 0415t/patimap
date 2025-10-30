@@ -36,6 +36,11 @@ def index():
 @app.route('/map')
 def map():
     return render_template('map.html')
+
+@app.route('/search')
+def search():
+    return redirect('map')
+
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
     
