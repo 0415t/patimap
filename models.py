@@ -19,3 +19,14 @@ class Message(db.Model):
     # オブジェクト表示用
     def __repr__(self):
         return f"Message('{self.sender}', '{self.post_date}')"
+    
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100),nullable = False)
+    # 緯度 (ピンの縦位置)
+    latitude = db.Column(db.Float, nullable=False)
+    # 経度 (ピンの横位置)
+    longitude = db.Column(db.Float, nullable=False)
+    description = db.Column(db.String(255))
+    def __repr__(self):
+        return f"<Location {self.id}: {self.name}>"
