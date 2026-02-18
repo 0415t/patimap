@@ -2,7 +2,7 @@ from flask import Flask, render_template,request,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_babel import Babel,format_datetime
-import datetime
+import datetime,json
 
 app = Flask(__name__)
 
@@ -17,7 +17,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db) 
 
 # models.pyが同じ階層であることが前提
-from models import Message
+from models import Message,fukuoka_data_lat_lng
 
 app.config['BABEL_DEFAULT_LOCALE'] = 'ja'
 app.config['BABEL_DEFAULT_TIMEZONE'] = 'Asia/Tokyo' 
@@ -35,7 +35,24 @@ def index():
 
 @app.route('/map')
 def map():
-    return render_template('map.html')
+    # 1. データベースから全件取得
+    locations = fukuoka_data_lat_lng.query.all()
+
+    # 2. JSONに変換（JavaScriptが読めるテキスト形式にする）
+    # リストの中に辞書を入れる形にします
+    data_for_js = []
+    for loc in locations:
+        data_for_js.append({
+            "name": loc.name,
+            "address": loc.address,
+            "lat": loc.latitude,  # JSで使いやすい名前に
+            "lng": loc.longitude,
+            "desc": loc.description
+        })
+    print(f"DEBUG: 取得した件数 = {len(locations)}") # ターミナルに件数が出るか確認
+    # DBから取ってJSONにする
+    locations_json = json.dumps(data_for_js)
+    return render_template('map.html', locations_json=locations_json)
 
 @app.route('/search')
 def search():

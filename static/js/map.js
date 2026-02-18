@@ -3,7 +3,7 @@ function initLeafletMap() {
     // L.map('map') でHTML要素(#map)に地図を関連付け、
     // setView([緯度, 経度], ズームレベル) で中心とズームを設定します。
     // Leafletは [緯度, 経度] の順序です。
-    const map = L.map('map').setView([35.6812, 139.7671], 15); 
+    const map = L.map('map').setView([33.6960213, 130.4408748], 15); 
 
     // 2. OpenStreetMapのタイルレイヤーを追加
     // これにより、地図の見た目（道路、建物など）が表示されます。
@@ -14,10 +14,31 @@ function initLeafletMap() {
     }).addTo(map);
 
     // 3. マーカー（ピン）を地図上に追加
-    L.marker([35.6812, 139.7671])
+    L.marker([33.6960213,130.4408748 ])
         .addTo(map)
-        .bindPopup('初期のピン（東京駅周辺）') // ポップアップのテキストを設定
+        .bindPopup('福岡工業大学') // ポップアップのテキストを設定
         .openPopup(); // 初期状態でポップアップを開く
+
+    // 4.マーカーの追加
+    //L.marker([33.68, 130.42]) // 👈 iconオプションで指定
+        //.addTo(map)
+        //.bindPopup('カスタム画像の場所');
+
+    // 4. DBから取得した店のピンを全部立てる
+    // locationsが空でないか、正しく読み込めているかチェック
+    if (typeof locations !== 'undefined' && locations !== null) {
+        locations.forEach(loc => {
+            // 値が入っているか確認してからピンを立てる
+            if (loc.lat && loc.lng) {
+                L.marker([loc.lat, loc.lng])
+                    .addTo(map)
+                    .bindPopup(`<b>${loc.name}</b><br>${loc.address}`);
+            }
+        });
+        console.log(`${locations.length}件のピンを表示しました`);
+    } else {
+        console.error("locationsが見つかりません。HTML側で正しく定義されていますか？");
+    }
 }
 
 // ページ読み込み後に地図を初期化

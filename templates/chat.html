@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>最小メッセージフォーム (サーバー送信)</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}チャット{% endblock %}
+
+{% block content %}
     <h1>メッセージ投稿 (データをサーバーへ送信)</h1>
     
     <!-- 1. データを入力し、送信するためのHTMLフォーム -->
@@ -31,5 +28,5 @@
         <div class="content">{{ message.content }}</div>
     </div>
     {% endfor %}
-    <a href="/">ホームへ移動</a>
-</body>
+
+    {% endblock %}
