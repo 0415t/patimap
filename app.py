@@ -47,7 +47,7 @@ def chat():
 
 @app.route('/api/messages',methods=['GET','POST'])
 def messages_api():
-    if request.methods== 'POST':
+    if request.method== 'POST':
         data = request.json
         try:
             new_message = Message(
