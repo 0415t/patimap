@@ -9,27 +9,63 @@
     <h1>メッセージ投稿 (データをサーバーへ送信)</h1>
     
     <!-- 1. データを入力し、送信するためのHTMLフォーム -->
-    <form method="post" action="{{ url_for('chat') }}">
-        <p>
-            <label for="sender">送信者名:</label>
-            <input type="text" id="sender" name="sender" placeholder="送信者" required>
-        </p>
-        <p>
-            <label for="content">メッセージ本文:</label>
-            <textarea id="content" name="content" rows="4" placeholder="本文" required></textarea>
-        </p>
-        <!-- type="submit"のボタンがフォームデータを送信するトリガーになります -->
-        <button type="submit" id="submit-button">送信</button>
-    </form>
+    <form id="chat-form">
+    <input type="text" id="sender" required>
+    <textarea id="content" required></textarea>
+    <button type="submit">送信</button>
+</form>
 
     <!--ログの表示 !-->
-    {% for message in messages %}
-    <div class="message-container">
-        <span class="sender">{{ message.sender }}</span>
-        <span class="date">{{ message.post_date | format_datetime('yyyy/MM/dd HH:mm:ss')}}</span>
-        
-        <div class="content">{{ message.content }}</div>
-    </div>
-    {% endfor %}
+ <div id="message-list"></div>
     <a href="/">ホームへ移動</a>
+
+<script>
+    // 1. サーバーからメッセージを取得して画面に出す関数
+    async function loadMessages() {
+        const response = await fetch('/api/messages');
+        const messages = await response.json();
+        
+        const list = document.getElementById('message-list');
+        list.innerHTML = ''; // 一旦空にする
+
+        messages.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = 'message-container'; // CSSがそのまま使える
+            div.innerHTML = `
+                <span class="sender">${msg.sender}</span>
+                <span class="date">${msg.date}</span>
+                <div class="content">${msg.content}</div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    // 最初の一回、メッセージを読み込む
+    loadMessages();
+
+    // 2. メッセージを送信する処理 (POST)
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); // ページが勝手にリロードするのを防ぐ！
+            
+            const data = {
+                sender: document.getElementById('sender').value,
+                content: document.getElementById('content').value
+            };
+
+            await fetch('/api/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            // 送信し終わったら、入力欄を空にして最新リストを再表示
+            document.getElementById('content').value = '';
+            loadMessages();
+        });
+
+        // ページを開いた時に実行
+        loadMessages();
+</script>
+
+
 </body>
