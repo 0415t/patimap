@@ -16,16 +16,6 @@ db = SQLAlchemy(app)
 # Flask-Migrateを初期化（dbとappを関連付ける）
 migrate = Migrate(app, db) 
 
-# models.pyが同じ階層であることが前提
-はい、その通りです！models.py を読み込む（インポートする）のをやめて、app.py の中に直接定義を書くことで、エラーの原因になっていた「循環参照」を完全に断ち切ることができます。
-
-以下のように app.py を書き換えてください。
-
-1. app.py の修正イメージ
-db = SQLAlchemy(app) を作成したすぐ下に貼り付けるのが一番安全です。
-
-Python
-# ... (上のインポートなどはそのまま)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
