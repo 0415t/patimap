@@ -10,13 +10,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# SQLAlchemyをアプリとつなげる
-db = SQLAlchemy(app)
-
-# Flask-Migrateを初期化（dbとappを関連付ける）
-migrate = Migrate(app, db) 
-
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -82,5 +75,9 @@ def messages_api():
 
 # アプリケーションを起動 (開発用サーバー)
 if __name__ == '__main__':
-    # デバッグモードをオンにして実行 (開発時)
-    app.run(debug=True)
+    # 1. データベースのテーブルを自動作成する（これがないとエラーになります）
+    with app.app_context():
+        db.create_all()
+    
+    # 2. host='0.0.0.0' を指定して外からの接続を許可する
+    app.run(debug=True, host='0.0.0.0', port=5000)
