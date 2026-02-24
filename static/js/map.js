@@ -1,24 +1,38 @@
 function initLeafletMap() {
-    // 1. 地図オブジェクトの作成
-    // L.map('map') でHTML要素(#map)に地図を関連付け、
-    // setView([緯度, 経度], ズームレベル) で中心とズームを設定します。
-    // Leafletは [緯度, 経度] の順序です。
-    const map = L.map('map').setView([35.6812, 139.7671], 15); 
+    // 1. 地図の作成（ここは変更なし）
+    const map = L.map('map').setView([33.6960213, 130.4408748], 15); 
 
-    // 2. OpenStreetMapのタイルレイヤーを追加
-    // これにより、地図の見た目（道路、建物など）が表示されます。
-    // attributionは著作権表示（必須）です。
+    // 2. タイルレイヤーの追加
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // 3. マーカー（ピン）を地図上に追加
-    L.marker([35.6812, 139.7671])
+    // 3. 福岡工業大学のピン
+    L.marker([33.6960213, 130.4408748])
         .addTo(map)
-        .bindPopup('初期のピン（東京駅周辺）') // ポップアップのテキストを設定
-        .openPopup(); // 初期状態でポップアップを開く
+        .bindPopup('福岡工業大学');
+
+    // 4. マーカーの追加（修正済み：カッコを閉じました）
+    // もしカスタムアイコンを使わないなら、普通のピンとして表示させます
+    L.marker([33.68, 130.42])
+        .addTo(map)
+        .bindPopup('テスト地点');
+
+    // 5. DBから取得した店のピンを全部立てる
+    if (typeof locations !== 'undefined' && locations !== null) {
+        locations.forEach(loc => {
+            // Python側から届くデータが数値(Float/REAL)であることを利用します
+            if (loc.latitude && loc.longitude) {
+                L.marker([loc.latitude, loc.longitude])
+                    .addTo(map)
+                    .bindPopup(`<b>${loc.name}</b><br>${loc.address}`);
+            }
+        });
+        console.log(`${locations.length}件のデータを地図に反映しました`);
+    } else {
+        console.error("locationsが見つかりません。HTML側を確認してください。");
+    }
 }
 
-// ページ読み込み後に地図を初期化
 initLeafletMap();

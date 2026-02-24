@@ -11,19 +11,19 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+from models import db, fukuoka_data_lat_lng ,Message
+
 migrate = Migrate(app, db)
 
-# --- ここに直接書く (models.py から持ってくる) ---
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    sender = db.Column(db.String(50))
-    content = db.Column(db.Text, nullable=False)
-    post_date = db.Column(db.DateTime, default=datetime.datetime.now)
+# 【ここに追加！】flask run で起動しても確実にテーブルを作る魔法
+with app.app_context():
+    db.create_all()
+    print("DEBUG: データベースのテーブルを確認・作成しました")
 
-    def __init__(self, sender, content):
-        self.sender = sender
-        self.content = content
+app.config['BABEL_DEFAULT_LOCALE'] = 'ja'
 
+    
 app.config['BABEL_DEFAULT_LOCALE'] = 'ja'
 app.config['BABEL_DEFAULT_TIMEZONE'] = 'Asia/Tokyo' 
 
@@ -40,7 +40,25 @@ def index():
 
 @app.route('/map')
 def map():
-    return render_template('map.html')
+    # 1. データベースから全店舗を取得
+    stores_data = fukuoka_data_lat_lng.query.all()
+    
+    # 【追加】ターミナルに件数を表示させる
+    print(f"DEBUG: データベースから {len(stores_data)} 件取得しました")
+    
+    # 2. JSが読み取れる「辞書のリスト」に変換
+    locations = []
+    for s in stores_data:
+        locations.append({
+            "name": s.name,
+            "address": s.address,
+            "latitude": s.latitude,   # ← s.lat から s.latitude に修正
+            "longitude": s.longitude,  # ← s.lng から s.longitude に修正
+            "description": s.description
+        })
+    
+    # 3. templates/index.html にデータを渡して表示
+    return render_template('map.html',locations=locations )
 
 @app.route('/search')
 def search():
