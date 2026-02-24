@@ -1,4 +1,4 @@
-from app import db # app.pyで初期化したdbをインポート
+from database import db # app.pyで初期化したdbをインポート
 from datetime import datetime # 投稿日時を扱うためのツールをインポート
 
 class Message(db.Model):

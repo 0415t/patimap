@@ -2,6 +2,8 @@ from flask import Flask, render_template,request,redirect,url_for,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_babel import Babel,format_datetime
+from database import db
+from models import fukuoka_data_lat_lng ,Message
 import datetime
 
 app = Flask(__name__)
@@ -10,16 +12,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
 
-from models import db, fukuoka_data_lat_lng ,Message
 
-migrate = Migrate(app, db)
 
-# 【ここに追加！】flask run で起動しても確実にテーブルを作る魔法
-with app.app_context():
-    db.create_all()
-    print("DEBUG: データベースのテーブルを確認・作成しました")
 
 app.config['BABEL_DEFAULT_LOCALE'] = 'ja'
 
@@ -27,9 +22,17 @@ app.config['BABEL_DEFAULT_LOCALE'] = 'ja'
 app.config['BABEL_DEFAULT_LOCALE'] = 'ja'
 app.config['BABEL_DEFAULT_TIMEZONE'] = 'Asia/Tokyo' 
 
-babel = Babel(app)
 
 #format_datetime 関数を 'format_datetime' という名前でJinja2フィルタとして登録
+# 【ここに追加！】flask run で起動しても確実にテーブルを作る魔法
+
+db.init_app(app)
+with app.app_context():
+    db.create_all()
+    print("DEBUG: データベースのテーブルを確認・作成しました")
+migrate = Migrate(app, db)
+babel = Babel(app)
+
 @app.template_filter('format_datetime')
 def format_dt_filter(value, format='medium'):
     return format_datetime(value, format)
